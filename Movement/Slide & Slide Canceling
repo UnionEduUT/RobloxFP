@@ -1,0 +1,64 @@
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float slideDuration = 1.0f;
+    public float slideSpeed = 10.0f;
+    public float slideCooldown = 2.0f;
+    public float slideCancelThreshold = 0.5f;
+
+    private CharacterController characterController;
+    private float slideTimer;
+    private bool isSliding = false;
+    private bool slideCanceled = false;
+    private float originalHeight;
+    private Vector3 originalCenter;
+
+    void Start()
+    {
+        characterController = GetComponent<CharacterController>();
+        originalHeight = characterController.height;
+        originalCenter = characterController.center;
+        slideTimer = slideCooldown; // Initially allowing the slide
+    }
+
+    void Update()
+    {
+        if (!isSliding && slideTimer >= slideCooldown)
+        {
+            // Start the slide when pressing the "Slide" button (you can adjust the input button according to your setup)
+            if (Input.GetButtonDown("SlideButton"))
+            {
+                isSliding = true;
+                characterController.height = originalHeight / 2; // Adjust height for the slide
+                characterController.center = originalCenter / 2; // Adjust the center for the slide
+                slideTimer = 0; // Reset slide cooldown timer
+                slideCanceled = false;
+            }
+        }
+
+        // Slide movement
+        if (isSliding)
+        {
+            slideTimer += Time.deltaTime;
+
+            // Perform the slide movement
+            Vector3 slideMovement = transform.forward * slideSpeed * Time.deltaTime;
+            characterController.Move(slideMovement);
+
+            // Check for slide cancel (stop sliding if conditions are met)
+            if (Input.GetButtonDown("SlideCancelButton"))
+            {
+                slideCanceled = true;
+            }
+
+            if (slideTimer >= slideDuration || slideCanceled || characterController.isGrounded)
+            {
+                // End the slide
+                isSliding = false;
+                characterController.height = originalHeight; // Reset height
+                characterController.center = originalCenter; // Reset center
+            }
+        }
+    }
+}
