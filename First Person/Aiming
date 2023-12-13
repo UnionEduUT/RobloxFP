@@ -1,0 +1,18 @@
+local player = game.Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+
+-- Function to toggle aiming (change FieldOfView)
+local function toggleAim()
+    if camera.FieldOfView == 70 then
+        camera.FieldOfView = 40 -- Adjust this value for the aimed FOV
+    else
+        camera.FieldOfView = 70 -- Adjust this value for the normal FOV
+    end
+end
+
+-- Example: Toggle aim when the 'Right Mouse Button' is pressed
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        toggleAim()
+    end
+end)
