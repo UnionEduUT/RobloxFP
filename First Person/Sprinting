@@ -1,0 +1,21 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local animator = humanoid:WaitForChild("Animator")
+
+-- Function to trigger the reload animation
+local function reloadWeapon()
+    -- Insert your reload animation ID here (replace with your actual animation ID)
+    local reloadAnimationId = "rbxassetid://123456789" -- Replace with your animation ID
+    
+    local animationTrack = animator:LoadAnimation(Instance.new("Animation", humanoid))
+    animationTrack.AnimationId = reloadAnimationId
+    animationTrack:Play()
+end
+
+-- Example: Trigger reload when the 'R' key is pressed
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.R then
+        reloadWeapon()
+    end
+end)
