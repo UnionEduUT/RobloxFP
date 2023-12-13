@@ -1,0 +1,48 @@
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float standingHeight = 1.0f;
+    public float crouchingHeight = 0.5f;
+    public float crouchSpeed = 5.0f;
+
+    private bool isCrouching = false;
+    private CharacterController characterController;
+    private float originalHeight;
+
+    void Start()
+    {
+        characterController = GetComponent<CharacterController>();
+        originalHeight = characterController.height;
+    }
+
+    void Update()
+    {
+        // Toggle crouching when pressing the C key
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = !isCrouching;
+            if (isCrouching)
+            {
+                characterController.height = crouchingHeight;
+            }
+            else
+            {
+                // When standing up, make sure there's no obstacle above
+                RaycastHit hit;
+                if (!Physics.Raycast(transform.position, Vector3.up, out hit, standingHeight))
+                {
+                    characterController.height = standingHeight;
+                }
+                else
+                {
+                    isCrouching = true;
+                }
+            }
+        }
+
+        // Smoothly change height while crouching or standing up
+        float targetHeight = isCrouching ? crouchingHeight : standingHeight;
+        characterController.height = Mathf.Lerp(characterController.height, targetHeight, crouchSpeed * Time.deltaTime);
+    }
+}
